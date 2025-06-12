@@ -12,7 +12,7 @@ import com.tennis.service.ProductService;
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "http://localhost:3000")
-@PreAuthorize("permitAll()")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class ProductController {
 
 	private final ProductService productService;

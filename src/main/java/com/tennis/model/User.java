@@ -1,6 +1,8 @@
 package com.tennis.model;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -13,7 +15,10 @@ public class User {
 	private String username;
 	private String email;
 	private String password;
-	private String role;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
 
 	public User() {
 	}
@@ -24,7 +29,7 @@ public class User {
 		this.password = password;
 	}
 
-	// Getteri i setteri
+	// Getteri i setteri...
 
 	public Long getId() {
 		return id;
@@ -58,11 +63,11 @@ public class User {
 		this.password = password;
 	}
 
-	public String getRole() {
-		return role;
+	public Set<Role> getRoles() {
+		return roles;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 }
