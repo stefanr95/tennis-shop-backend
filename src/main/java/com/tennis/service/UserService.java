@@ -41,4 +41,18 @@ public class UserService {
 
 		return userRepository.save(user);
 	}
+
+	public User registerNewAdmin(RegisterRequest registerRequest) {
+		User user = new User();
+		user.setUsername(registerRequest.getUsername());
+		user.setEmail(registerRequest.getEmail());
+		user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+		Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+				.orElseThrow(() -> new RuntimeException("Error: ROLE_ADMIN not found."));
+
+		user.setRoles(Set.of(adminRole));
+
+		return userRepository.save(user);
+	}
 }

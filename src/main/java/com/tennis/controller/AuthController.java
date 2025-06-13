@@ -8,6 +8,7 @@ import com.tennis.security.JwtTokenProvider;
 import com.tennis.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,5 +51,12 @@ public class AuthController {
 	public ResponseEntity<User> registerUser(@RequestBody RegisterRequest registerRequest) {
 		User newUser = userService.registerNewUser(registerRequest);
 		return ResponseEntity.ok(newUser);
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/register-admin")
+	public ResponseEntity<User> registerAdmin(@RequestBody RegisterRequest registerRequest) {
+		User newAdmin = userService.registerNewAdmin(registerRequest);
+		return ResponseEntity.ok(newAdmin);
 	}
 }
