@@ -2,6 +2,7 @@ package com.tennis.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -62,8 +63,12 @@ public class SecurityConfig {
 		http.cors() // << OVDE MORA BITI UKLJUČENO
 				.and().csrf().disable().authorizeRequests().requestMatchers("/api/auth/**").permitAll() // login i
 																										// registracija
-				.requestMatchers("/api/products/**").permitAll().requestMatchers("/api/orders/**").permitAll()// svi
-																												// proizvodi
+				.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
+				.requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
+				.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+				.requestMatchers("/api/orders/**").permitAll()// svi
+																// proizvodi
 				.anyRequest().authenticated().and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

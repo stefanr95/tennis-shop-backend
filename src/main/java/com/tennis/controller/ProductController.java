@@ -12,7 +12,6 @@ import com.tennis.service.ProductService;
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "http://localhost:3000")
-@PreAuthorize("hasAuthority('ADMIN')")
 public class ProductController {
 
 	private final ProductService productService;
@@ -23,6 +22,7 @@ public class ProductController {
 	}
 
 	// Dodavanje novog proizvoda
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/add")
 	public Product addProduct(@RequestBody Product product) {
 		return productService.addProduct(product);
@@ -35,6 +35,7 @@ public class ProductController {
 	}
 
 	// Prikaz svih proizvoda
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping
 	public Page<Product> getAllProducts(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
@@ -43,6 +44,7 @@ public class ProductController {
 	}
 
 	// Brisanje proizvoda
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
 		productService.deleteProduct(id);
