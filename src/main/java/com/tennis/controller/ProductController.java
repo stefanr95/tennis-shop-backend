@@ -16,26 +16,22 @@ public class ProductController {
 
 	private final ProductService productService;
 
-	// Konstruktor za ProductService
 	public ProductController(ProductService productService) {
 		this.productService = productService;
 	}
 
-	// Dodavanje novog proizvoda
-	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/add")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public Product addProduct(@RequestBody Product product) {
 		return productService.addProduct(product);
 	}
 
-	// Izmena postojećeg proizvoda
 	@PutMapping("/update/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
 		return productService.updateProduct(id, updatedProduct);
 	}
 
-	// Prikaz svih proizvoda
-	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping
 	public Page<Product> getAllProducts(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
@@ -43,9 +39,8 @@ public class ProductController {
 		return productService.getAllProducts(pageable);
 	}
 
-	// Brisanje proizvoda
-	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/delete/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
 		productService.deleteProduct(id);
 		return ResponseEntity.noContent().build();

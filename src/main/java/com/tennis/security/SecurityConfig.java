@@ -2,7 +2,6 @@ package com.tennis.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -30,7 +29,6 @@ public class SecurityConfig {
 		this.userDetailsService = userDetailsService;
 	}
 
-	// PasswordEncoder Bean
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -47,30 +45,19 @@ public class SecurityConfig {
 		};
 	}
 
-	// AuthenticationManager Bean
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-		AuthenticationManagerBuilder authenticationManagerBuilder = http
-				.getSharedObject(AuthenticationManagerBuilder.class);
-		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-		return authenticationManagerBuilder.build();
+		AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+		authBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		return authBuilder.build();
 	}
 
-	// SecurityFilterChain Bean
-	@SuppressWarnings({ "removal", "deprecation" })
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors() // << OVDE MORA BITI UKLJUČENO
-				.and().csrf().disable().authorizeRequests().requestMatchers("/api/auth/**").permitAll() // login i
-																										// registracija
-				.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
-				.requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
-				.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
-				.requestMatchers("/api/orders/**").permitAll()// svi
-																// proizvodi
-				.anyRequest().authenticated().and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.cors().and().csrf().disable()
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers("/api/products/**").permitAll().anyRequest().authenticated())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

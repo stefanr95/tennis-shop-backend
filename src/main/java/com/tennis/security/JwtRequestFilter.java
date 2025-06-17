@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.tennis.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,10 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-	private final CustomUserDetailsService userDetailsService;
+	private final UserDetailsServiceImpl userDetailsService;
 	private final JwtUtil jwtUtil;
 
-	public JwtRequestFilter(CustomUserDetailsService userDetailsService, JwtUtil jwtUtil) {
+	public JwtRequestFilter(UserDetailsServiceImpl userDetailsService, JwtUtil jwtUtil) {
 		this.userDetailsService = userDetailsService;
 		this.jwtUtil = jwtUtil;
 	}
@@ -41,13 +40,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-			if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
-				UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null,
-						userDetails.getAuthorities());
+			if (jwtUtil.validateToken(jwt, userDetails)) {
+				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
 
-				token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-				SecurityContextHolder.getContext().setAuthentication(token);
+				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 			}
 		}
 		chain.doFilter(request, response);

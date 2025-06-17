@@ -35,7 +35,7 @@ public class UserService {
 		user.setEmail(registerRequest.getEmail());
 		user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
-		Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+		Role userRole = roleRepository.findByName(ERole.USER)
 				.orElseThrow(() -> new RuntimeException("Error: ROLE_USER not found."));
 		user.setRoles(Set.of(userRole));
 
@@ -48,8 +48,8 @@ public class UserService {
 		user.setEmail(registerRequest.getEmail());
 		user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
-		Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-				.orElseThrow(() -> new RuntimeException("Error: ROLE_ADMIN not found."));
+		Role adminRole = roleRepository.findByName(ERole.ADMIN)
+				.orElseThrow(() -> new RuntimeException("Error: ADMIN not found."));
 
 		user.setRoles(Set.of(adminRole));
 

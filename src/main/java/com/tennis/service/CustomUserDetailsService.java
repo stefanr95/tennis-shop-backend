@@ -1,8 +1,9 @@
 package com.tennis.service;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 import com.tennis.model.User;
@@ -20,25 +21,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-		System.out.println("⏩ Pozvana metoda loadUserByUsername sa: " + usernameOrEmail);
+		User user = userRepository.findByEmail(usernameOrEmail).orElseGet(
+				() -> userRepository.findByUsername(usernameOrEmail).orElseThrow(() -> new UsernameNotFoundException(
+						"User not found with email or username: " + usernameOrEmail)));
 
-		Optional<User> userByEmail = userRepository.findByEmail(usernameOrEmail);
-		if (userByEmail.isPresent()) {
-			System.out.println("✅ Nađen korisnik po email-u");
-			User user = userByEmail.get();
-			return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-					new ArrayList<>());
-		}
+		Set<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+				.map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())).collect(Collectors.toSet());
 
-		Optional<User> userByUsername = userRepository.findByUsername(usernameOrEmail);
-		if (userByUsername.isPresent()) {
-			System.out.println("✅ Nađen korisnik po username-u");
-			User user = userByUsername.get();
-			return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-					new ArrayList<>());
-		}
-
-		System.out.println("❌ Nije pronađen korisnik ni po email ni po username.");
-		throw new UsernameNotFoundException("User not found with email or username: " + usernameOrEmail);
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
 	}
 }
