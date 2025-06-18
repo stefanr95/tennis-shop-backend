@@ -9,7 +9,7 @@ import com.tennis.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.*;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -26,32 +26,33 @@ public class UserService {
 	}
 
 	public User registerNewUser(RegisterRequest registerRequest) {
-		if (userRepository.existsByUsername(registerRequest.getEmail())) {
-			throw new RuntimeException("Email already in use");
-		}
-
-		User user = new User();
-		user.setUsername(registerRequest.getUsername());
-		user.setEmail(registerRequest.getEmail());
-		user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-
-		Role userRole = roleRepository.findByName(ERole.USER)
-				.orElseThrow(() -> new RuntimeException("Error: ROLE_USER not found."));
-		user.setRoles(Set.of(userRole));
-
-		return userRepository.save(user);
+		validateUserUniqueness(registerRequest);
+		return createUserWithRole(registerRequest, ERole.USER);
 	}
 
 	public User registerNewAdmin(RegisterRequest registerRequest) {
+		validateUserUniqueness(registerRequest);
+		return createUserWithRole(registerRequest, ERole.ADMIN);
+	}
+
+	private void validateUserUniqueness(RegisterRequest request) {
+		if (userRepository.existsByEmail(request.getEmail())) {
+			throw new RuntimeException("Email already in use.");
+		}
+		if (userRepository.existsByUsername(request.getUsername())) {
+			throw new RuntimeException("Username already in use.");
+		}
+	}
+
+	private User createUserWithRole(RegisterRequest request, ERole roleName) {
+		Role role = roleRepository.findByName(roleName)
+				.orElseThrow(() -> new RuntimeException("Error: Role " + roleName + " not found."));
+
 		User user = new User();
-		user.setUsername(registerRequest.getUsername());
-		user.setEmail(registerRequest.getEmail());
-		user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-
-		Role adminRole = roleRepository.findByName(ERole.ADMIN)
-				.orElseThrow(() -> new RuntimeException("Error: ADMIN not found."));
-
-		user.setRoles(Set.of(adminRole));
+		user.setUsername(request.getUsername());
+		user.setEmail(request.getEmail());
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		user.setRoles(Set.of(role));
 
 		return userRepository.save(user);
 	}
