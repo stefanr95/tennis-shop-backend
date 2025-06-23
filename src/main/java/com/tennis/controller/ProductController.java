@@ -1,13 +1,13 @@
 package com.tennis.controller;
 
+import com.tennis.model.Product;
+import com.tennis.service.ProductService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import com.tennis.model.Product;
-import com.tennis.service.ProductService;
 
 @RestController
 @RequestMapping("/api/products")
@@ -20,26 +20,27 @@ public class ProductController {
 		this.productService = productService;
 	}
 
-	@PostMapping("/add")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public Product addProduct(@RequestBody Product product) {
-		return productService.addProduct(product);
-	}
-
-	@PutMapping("/update/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-		return productService.updateProduct(id, updatedProduct);
-	}
-
 	@GetMapping
-	public Page<Product> getAllProducts(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<Page<Product>> getAllProducts(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
+
 		Pageable pageable = PageRequest.of(page, size);
-		return productService.getAllProducts(pageable);
+		return ResponseEntity.ok(productService.getAllProducts(pageable));
 	}
 
-	@DeleteMapping("/delete/{id}")
+	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+		return ResponseEntity.ok(productService.addProduct(product));
+	}
+
+	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
+		return ResponseEntity.ok(productService.updateProduct(id, updatedProduct));
+	}
+
+	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
 		productService.deleteProduct(id);
