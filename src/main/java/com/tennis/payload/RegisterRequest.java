@@ -18,6 +18,16 @@ public class RegisterRequest {
 	@Size(min = 6, max = 40, message = "Password must be between 6 and 40 characters")
 	private String password;
 
+	// Constructors
+	public RegisterRequest() {
+	}
+
+	public RegisterRequest(String username, String email, String password) {
+		this.username = username;
+		this.email = email;
+		this.password = password;
+	}
+
 	public String getUsername() {
 		return username;
 	}
