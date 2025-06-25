@@ -21,5 +21,4 @@ public class CartItemRequest {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-
 }

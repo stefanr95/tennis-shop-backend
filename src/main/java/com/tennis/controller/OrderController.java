@@ -1,15 +1,15 @@
 package com.tennis.controller;
 
-import java.util.List;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import com.tennis.model.Order;
 import com.tennis.model.OrderStatus;
 import com.tennis.service.OrderService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin(origins = "http://localhost:3000")
 public class OrderController {
 
 	private final OrderService orderService;
@@ -18,42 +18,40 @@ public class OrderController {
 		this.orderService = orderService;
 	}
 
-	// Kreiranje porudzbine
-	@PostMapping("/checkout")
-	public ResponseEntity<Order> checkout(@RequestBody Order order) {
-		Order saved = orderService.createOrder(order);
-		return ResponseEntity.status(201).body(saved);
+	@PostMapping
+	public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+		Order savedOrder = orderService.createOrder(order);
+		return ResponseEntity.status(201).body(savedOrder);
 	}
 
-	// Dohvatanje svih porudzbina
 	@GetMapping
-	public List<Order> getAllOrders() {
-		return orderService.getAllOrders();
+	public ResponseEntity<List<Order>> getAllOrders() {
+		List<Order> orders = orderService.getAllOrders();
+		return ResponseEntity.ok(orders);
 	}
 
-	// Detalji pojedinačne porudžbine
 	@GetMapping("/{id}")
-	public Order getOrderById(@PathVariable Long id) {
-		return orderService.getOrderById(id);
+	public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+		Order order = orderService.getOrderById(id);
+		return ResponseEntity.ok(order);
 	}
 
-	// Brisanje porudžbine
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
 		orderService.deleteOrder(id);
-		return ResponseEntity.status(204).build();
+		return ResponseEntity.noContent().build();
 	}
 
-	// Ažuriranje statusa porudžbine
-	@PutMapping("/update-status/{id}")
-	public Order updateOrderStatus(@PathVariable Long id, @RequestBody OrderStatus status) {
+	@PutMapping("/{id}/status")
+	public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestBody OrderStatus status) {
 		orderService.updateOrderStatus(id, status);
-		return orderService.getOrderById(id);
+		Order updatedOrder = orderService.getOrderById(id);
+		return ResponseEntity.ok(updatedOrder);
 	}
 
-	// Dohvat statusa porudžbine
-	@GetMapping("/status/{id}")
-	public OrderStatus getOrderStatus(@PathVariable Long id) {
-		return orderService.getOrderStatus(id);
+	@GetMapping("/{id}/status")
+	public ResponseEntity<OrderStatus> getOrderStatus(@PathVariable Long id) {
+		OrderStatus status = orderService.getOrderStatus(id);
+		return ResponseEntity.ok(status);
 	}
 }

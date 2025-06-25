@@ -1,11 +1,11 @@
 package com.tennis.service;
 
-import java.util.List;
-import org.springframework.stereotype.Service;
 import com.tennis.exception.ResourceNotFoundException;
 import com.tennis.model.Order;
 import com.tennis.model.OrderStatus;
 import com.tennis.repository.OrderRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -16,43 +16,42 @@ public class OrderService {
 		this.orderRepository = orderRepository;
 	}
 
-	// Kreiranje nove porudžbine
 	public Order createOrder(Order order) {
 		return orderRepository.save(order);
 	}
 
-	// Dohvatanje svih porudžbina
 	public List<Order> getAllOrders() {
 		return orderRepository.findAll();
 	}
 
-	// Dohvatanje porudžbine po ID-u
 	public Order getOrderById(Long id) {
-		return orderRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + id));
+		return findOrderByIdOrThrow(id);
 	}
 
-	// Brisanje porudžbine
 	public void deleteOrder(Long id) {
+		if (!orderRepository.existsById(id)) {
+			throw new ResourceNotFoundException("Order not found with ID: " + id);
+		}
 		orderRepository.deleteById(id);
 	}
 
-	// Ažuriranje statusa porudžbine
-	public void updateOrderStatus(Long orderId, OrderStatus status) {
-		Order order = orderRepository.findById(orderId)
-				.orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
+	public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
+		Order order = findOrderByIdOrThrow(orderId);
 
-		if (order.getStatus() != status) {
-			order.setStatus(status);
-			orderRepository.save(order);
-		} else {
+		if (order.getStatus() == newStatus) {
 			throw new IllegalStateException("Order is already in the desired status.");
 		}
+
+		order.setStatus(newStatus);
+		return orderRepository.save(order);
 	}
 
-	// Dohvat statusa porudžbine
 	public OrderStatus getOrderStatus(Long id) {
-		Order order = getOrderById(id);
-		return order.getStatus();
+		return findOrderByIdOrThrow(id).getStatus();
+	}
+
+	private Order findOrderByIdOrThrow(Long id) {
+		return orderRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + id));
 	}
 }
