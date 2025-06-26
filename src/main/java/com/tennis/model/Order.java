@@ -1,9 +1,9 @@
 package com.tennis.model;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import jakarta.persistence.*;
 
 @Entity
 @Table(name = "orders")
@@ -23,16 +23,15 @@ public class Order {
 	private OrderStatus status = OrderStatus.PENDING;
 
 	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "order_id")
 	private List<CartItem> items;
 
 	private BigDecimal total;
 
+	// Getters and Setters
+
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getCustomerName() {
@@ -67,6 +66,14 @@ public class Order {
 		this.orderDate = orderDate;
 	}
 
+	public OrderStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(OrderStatus status) {
+		this.status = status;
+	}
+
 	public List<CartItem> getItems() {
 		return items;
 	}
@@ -81,13 +88,5 @@ public class Order {
 
 	public void setTotal(BigDecimal total) {
 		this.total = total;
-	}
-
-	public OrderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(OrderStatus status) {
-		this.status = status;
 	}
 }

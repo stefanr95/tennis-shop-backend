@@ -11,8 +11,10 @@ public class Role {
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20)
+	@Column(nullable = false, length = 20, unique = true)
 	private ERole name;
+
+	// Constructors
 
 	public Role() {
 	}
@@ -20,6 +22,8 @@ public class Role {
 	public Role(ERole name) {
 		this.name = name;
 	}
+
+	// Getters and Setters
 
 	public Long getId() {
 		return id;

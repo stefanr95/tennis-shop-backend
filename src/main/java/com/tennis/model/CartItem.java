@@ -9,11 +9,13 @@ public class CartItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id")
 	private Product product;
 
 	private int quantity;
 
+	// Constructors
 	public CartItem() {
 	}
 
@@ -22,12 +24,9 @@ public class CartItem {
 		this.quantity = quantity;
 	}
 
+	// Getters and Setters
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Product getProduct() {

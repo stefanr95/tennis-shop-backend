@@ -1,34 +1,34 @@
 package com.tennis.model;
 
-import jakarta.persistence.Id;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "products")
 public class Product {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
 	private String name;
 
 	@Column(length = 1000)
 	private String description;
 
+	@Column(nullable = false)
 	private BigDecimal price;
 
 	private String imageUrl;
-
 	private String category;
 
+	// Constructors
+
 	public Product() {
-		super();
 	}
 
-	public Product(Long id, String name, String description, BigDecimal price, String imageUrl, String category) {
-		super();
-		this.id = id;
+	public Product(String name, String description, BigDecimal price, String imageUrl, String category) {
 		this.name = name;
 		this.description = description;
 		this.price = price;
@@ -36,12 +36,10 @@ public class Product {
 		this.category = category;
 	}
 
+	// Getters and Setters
+
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {
