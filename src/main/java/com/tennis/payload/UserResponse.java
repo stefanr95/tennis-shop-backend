@@ -35,5 +35,4 @@ public class UserResponse {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
 }
