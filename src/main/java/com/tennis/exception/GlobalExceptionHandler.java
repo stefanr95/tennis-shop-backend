@@ -9,16 +9,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+	private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message) {
+		ErrorResponse error = new ErrorResponse(status.value(), message, LocalDateTime.now());
+		return new ResponseEntity<>(error, status);
+	}
+
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
-		ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), LocalDateTime.now());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-		ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-				"Internal server error. Contact admin.", LocalDateTime.now());
-		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+		return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error. Contact admin.");
 	}
 }
