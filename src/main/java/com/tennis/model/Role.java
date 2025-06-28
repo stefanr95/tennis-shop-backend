@@ -1,9 +1,14 @@
 package com.tennis.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "roles")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Role {
 
 	@Id
@@ -13,27 +18,4 @@ public class Role {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20, unique = true)
 	private ERole name;
-
-	// Constructors
-
-	public Role() {
-	}
-
-	public Role(ERole name) {
-		this.name = name;
-	}
-
-	// Getters and Setters
-
-	public Long getId() {
-		return id;
-	}
-
-	public ERole getName() {
-		return name;
-	}
-
-	public void setName(ERole name) {
-		this.name = name;
-	}
 }
