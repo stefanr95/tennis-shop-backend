@@ -6,24 +6,18 @@ import com.tennis.model.User;
 import com.tennis.payload.RegisterRequest;
 import com.tennis.repository.RoleRepository;
 import com.tennis.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
-
-	@Autowired
-	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
-		this.passwordEncoder = passwordEncoder;
-	}
 
 	public User registerNewUser(RegisterRequest registerRequest) {
 		validateUserUniqueness(registerRequest);
@@ -46,7 +40,7 @@ public class UserService {
 
 	private User createUserWithRole(RegisterRequest request, ERole roleName) {
 		Role role = roleRepository.findByName(roleName)
-				.orElseThrow(() -> new RuntimeException("Error: Role " + roleName + " not found."));
+				.orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
 
 		User user = new User();
 		user.setUsername(request.getUsername());
