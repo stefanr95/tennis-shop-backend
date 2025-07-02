@@ -1,38 +1,36 @@
 package com.tennis.service;
 
+import com.tennis.exception.ResourceNotFoundException;
 import com.tennis.model.CartItem;
 import com.tennis.model.Product;
 import com.tennis.repository.CartItemRepository;
 import com.tennis.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CartItemService {
 
-	private CartItemRepository cartItemRepository;
-	private ProductRepository productRepository;
+	private final CartItemRepository cartItemRepository;
+	private final ProductRepository productRepository;
 
-	public CartItemService(CartItemRepository cartItemRepository, ProductRepository productRepository) {
-		this.cartItemRepository = cartItemRepository;
-		this.productRepository = productRepository;
-	}
-
-	// Dodavanje proizvoda u korpu
+	// Add product to cart
 	public void addProductToCart(Long productId, int quantity) {
 		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Proizvod nije pronađen"));
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
 
 		CartItem cartItem = new CartItem(product, quantity);
 		cartItemRepository.save(cartItem);
 	}
 
-	// Dohvatanje proizvoda iz korpe
+	// Get all cart items
 	public List<CartItem> getCartItems() {
 		return cartItemRepository.findAll();
 	}
 
-	// Brisanje proizvoda iz korpe
+	// Remove product from cart
 	public void removeProductFromCart(Long productId) {
 		cartItemRepository.deleteByProductId(productId);
 	}
