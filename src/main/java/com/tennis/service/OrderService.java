@@ -4,17 +4,15 @@ import com.tennis.exception.ResourceNotFoundException;
 import com.tennis.model.Order;
 import com.tennis.model.OrderStatus;
 import com.tennis.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
 	private final OrderRepository orderRepository;
-
-	public OrderService(OrderRepository orderRepository) {
-		this.orderRepository = orderRepository;
-	}
 
 	public Order createOrder(Order order) {
 		return orderRepository.save(order);
