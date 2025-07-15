@@ -29,6 +29,12 @@ public class AuthController {
 		this.tokenProvider = tokenProvider;
 	}
 
+	@PostMapping("/register")
+	public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+		User user = userService.registerNewUser(request);
+		return ResponseEntity.ok(user);
+	}
+
 	@PostMapping("/login")
 	public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
 		Authentication authentication = authenticationManager.authenticate(
@@ -38,12 +44,6 @@ public class AuthController {
 		String jwt = tokenProvider.generateToken(authentication);
 
 		return ResponseEntity.ok(new JwtResponse(jwt));
-	}
-
-	@PostMapping("/register")
-	public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
-		User user = userService.registerNewUser(request);
-		return ResponseEntity.ok(user);
 	}
 
 	@PostMapping("/register-admin")
