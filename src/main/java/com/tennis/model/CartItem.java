@@ -1,5 +1,6 @@
 package com.tennis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class CartItem {
 
 	@Id
@@ -23,8 +25,13 @@ public class CartItem {
 
 	private int quantity;
 
-	public CartItem(Product product, int quantity) {
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
+	public CartItem(Product product, int quantity, User user) {
 		this.product = product;
 		this.quantity = quantity;
+		this.user = user;
 	}
 }
