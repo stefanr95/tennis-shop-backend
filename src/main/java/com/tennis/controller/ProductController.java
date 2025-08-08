@@ -20,14 +20,6 @@ public class ProductController {
 		this.productService = productService;
 	}
 
-	@GetMapping
-	public ResponseEntity<Page<Product>> getAllProducts(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-
-		Pageable pageable = PageRequest.of(page, size);
-		return ResponseEntity.ok(productService.getAllProducts(pageable));
-	}
-
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
@@ -48,18 +40,17 @@ public class ProductController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<Product>> getProducts(@RequestParam(required = false) String search,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+	public ResponseEntity<Page<Product>> getAllProducts(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String search) {
 
 		Pageable pageable = PageRequest.of(page, size);
 		Page<Product> products;
 
-		if (search == null || search.trim().isEmpty()) {
-			products = productService.getAllProducts(pageable);
+		if (search != null && !search.isEmpty()) {
+			products = productService.searchProducts(search, pageable);
 		} else {
-			products = productService.searchProducts(search.trim(), pageable);
+			products = productService.getAllProducts(pageable);
 		}
-
 		return ResponseEntity.ok(products);
 	}
 }

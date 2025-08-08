@@ -38,6 +38,6 @@ public class ProductService {
 	}
 
 	public Page<Product> searchProducts(String searchTerm, Pageable pageable) {
-		return productRepository.searchByName(searchTerm, pageable);
+		return productRepository.findByNameContainingIgnoreCase(searchTerm, pageable);
 	}
 }
