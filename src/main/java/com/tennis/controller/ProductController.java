@@ -46,4 +46,20 @@ public class ProductController {
 		productService.deleteProduct(id);
 		return ResponseEntity.noContent().build();
 	}
+
+	@GetMapping
+	public ResponseEntity<Page<Product>> getProducts(@RequestParam(required = false) String search,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Product> products;
+
+		if (search == null || search.trim().isEmpty()) {
+			products = productService.getAllProducts(pageable);
+		} else {
+			products = productService.searchProducts(search.trim(), pageable);
+		}
+
+		return ResponseEntity.ok(products);
+	}
 }

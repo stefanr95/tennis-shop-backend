@@ -36,4 +36,8 @@ public class ProductService {
 	public void deleteProduct(Long id) {
 		productRepository.deleteById(id);
 	}
+
+	public Page<Product> searchProducts(String searchTerm, Pageable pageable) {
+		return productRepository.searchByName(searchTerm, pageable);
+	}
 }
