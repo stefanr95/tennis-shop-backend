@@ -47,24 +47,16 @@ public class CartItemService {
 	}
 
 	@Transactional
-	public void increaseQuantity(Long productId) {
-		User user = getCurrentUser();
-		CartItem cartItem = cartItemRepository.findByUserIdAndProductId(user.getId(), productId)
-				.orElseThrow(() -> new ResourceNotFoundException("Cart item not found for product id: " + productId));
-		cartItem.setQuantity(cartItem.getQuantity() + 1);
-		cartItemRepository.save(cartItem);
-	}
-
-	@Transactional
-	public void decreaseQuantity(Long productId) {
-		User user = getCurrentUser();
-		CartItem cartItem = cartItemRepository.findByUserIdAndProductId(user.getId(), productId)
-				.orElseThrow(() -> new ResourceNotFoundException("Cart item not found for product id: " + productId));
-		if (cartItem.getQuantity() > 1) {
-			cartItem.setQuantity(cartItem.getQuantity() - 1);
-			cartItemRepository.save(cartItem);
-		} else {
-			cartItemRepository.delete(cartItem);
+	public void updateQuantity(Long productId, int quantity) {
+		if (quantity < 1) {
+			removeProductFromCart(productId);
+			return;
 		}
+
+		User user = getCurrentUser();
+		CartItem cartItem = cartItemRepository.findByUserIdAndProductId(user.getId(), productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Cart item not found for product id: " + productId));
+		cartItem.setQuantity(quantity);
+		cartItemRepository.save(cartItem);
 	}
 }
