@@ -9,7 +9,6 @@ import com.tennis.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Set;
 
 @Service
@@ -52,17 +51,11 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	/**
-	 * Pronadji korisnika po username-u
-	 */
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username)
 				.orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 	}
 
-	/**
-	 * Pronadji korisnika po email-u
-	 */
 	public User findByEmail(String email) {
 		return userRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("User not found with email: " + email));
