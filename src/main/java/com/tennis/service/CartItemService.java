@@ -32,7 +32,6 @@ public class CartItemService {
 
 		User user = getCurrentUser();
 
-		// ako već postoji taj proizvod u korpi → povećaj količinu
 		CartItem cartItem = cartItemRepository.findByUserIdAndProductId(user.getId(), productId).map(item -> {
 			item.setQuantity(item.getQuantity() + quantity);
 			return item;
